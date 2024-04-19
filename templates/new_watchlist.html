@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Create a New Watchlist</h1>
+    <form action="{{ url_for('new_watchlist') }}" method="post">
+        <label for="watchlist_name">Watchlist Name:</label>
+        <input type="text" id="watchlist_name" name="watchlist_name" required><br>
+
+        <fieldset>
+            <legend>Select Movies:</legend>
+            {% for movie in movies %}
+                <input type="checkbox" id="movie_{{ movie[0] }}" name="movies" value="{{ movie[0] }}">
+                <label for="movie_{{ movie[0] }}">{{ movie[1] }}</label><br>
+            {% endfor %}
+        </fieldset>
+
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Watchlists</h1>
+    <ul>
+    {% for watchlist in watchlists %}
+        <li>
+            <a href="{{ url_for('view_watchlist', watchlist_id=watchlist[0]) }}">{{ watchlist[1] }}</a>
+            <a href="{{ url_for('edit_watchlist', watchlist_id=watchlist[0]) }}" class="btn btn-primary btn-sm">Edit</a>
+            <form action="{{ url_for('delete_watchlist', watchlist_id=watchlist[0]) }}" method="post" style="display: inline-block;">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

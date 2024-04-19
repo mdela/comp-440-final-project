@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Movie Details</h1>
+    <p><strong>Title:</strong> {{ movie[1] }}</p>
+    <p><strong>Year:</strong> {{ movie[2] }}</p>
+
+    <!-- Displaying genres -->
+    <p><strong>Genres:</strong>
+        {% if genres %}
+            {% for genre in genres %}
+                {% if not loop.last %}
+                    {{ genre[0] }}, 
+                {% else %}
+                    {{ genre[0] }}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            No genres listed.
+        {% endif %}
+    </p>
+
+    <p><a href="{{ url_for('edit_movie', movie_id=movie[0]) }}">Edit Movie</a></p>
+{% endblock %}

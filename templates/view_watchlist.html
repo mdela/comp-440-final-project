@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ watchlist_name }}</h1>
+    <ul>
+    {% for movie in movies %}
+        <li>{{ movie.title }} ({{ movie.year }})</li>
+    {% endfor %}
+    </ul>
+    <a href="{{ url_for('edit_watchlist', watchlist_id=watchlist_id) }}" class="btn btn-primary">Edit Watchlist</a>
+    <form action="{{ url_for('delete_watchlist', watchlist_id=watchlist_id) }}" method="post" style="display: inline-block;">
+        <button type="submit" class="btn btn-danger">Delete Watchlist</button>
+    </form>
+{% endblock %}

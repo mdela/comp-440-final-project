@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Review for {{ review[4] }} ({{ review[5] }})</h1>
+    <p><strong>Title:</strong> {{ review[1] }}</p>
+    <p><strong>Rating:</strong> {{ review[2] }}</p>
+    <p><strong>Description:</strong> {{ review[3] }}</p>
+    <a href="{{ url_for('edit_review', review_id=review[0]) }}" class="btn btn-primary">Edit</a>
+    <form action="{{ url_for('delete_review', review_id=review[0]) }}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+{% endblock %}

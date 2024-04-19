@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add a New Movie</h1>
+    <form action="{{ url_for('new_movie') }}" method="post">
+        <label for="movie_title">Movie Title:</label>
+        <input type="text" id="movie_title" name="movie_title" required><br>
+        
+        <label for="movie_year">Movie Year:</label>
+        <input type="number" id="movie_year" name="movie_year" required><br>
+        
+        <label for="status">Status:</label>
+        <select name="status" id="status" required>
+            {% for status in statuses %}
+                <option value="{{ status[0] }}">{{ status[1] }}</option>
+            {% endfor %}
+        </select><br>
+
+        <fieldset>
+            <legend>Select Genres:</legend>
+            {% for genre in genres %}
+                <input type="checkbox" id="genre_{{ genre[0] }}" name="genres" value="{{ genre[0] }}">
+                <label for="genre_{{ genre[0] }}">{{ genre[1] }}</label><br>
+            {% endfor %}
+        </fieldset>
+        
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
