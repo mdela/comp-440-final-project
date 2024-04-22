@@ -19,11 +19,12 @@ def home():
 def movies_list():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT movie_id, movie_title, movie_year FROM movies")
+    cur.execute("SELECT movie_id, movie_title, movie_year, status_description FROM movies JOIN status ON movies.status_id = status.status_id")
     movies = cur.fetchall()
     cur.close()
     conn.close()
     return render_template('movies_list.html', movies=movies)
+
 
 # Route for viewing a single movie
 @app.route('/movie/<int:movie_id>')
@@ -83,42 +84,23 @@ def new_movie():
 def edit_movie(movie_id):
     conn = get_db_connection()
     cur = conn.cursor()
-    
     if request.method == 'POST':
         movie_year = request.form['movie_year']
-        selected_genres = request.form.getlist('genres')
-        
-        # Update movie details
-        cur.execute("UPDATE movies SET movie_year = %s WHERE movie_id = %s", (movie_year, movie_id))
-        
-        # Update genres for the movie
-        # Remove all current genre associations
-        cur.execute("DELETE FROM movie_genres WHERE movie_id = %s", (movie_id,))
-        
-        # Add new genre associations
-        for genre_id in selected_genres:
-            cur.execute("INSERT INTO movie_genres (movie_id, genre_id) VALUES (%s, %s)", (movie_id, genre_id))
-        
+        status_id = request.form['status_id']
+        cur.execute("UPDATE movies SET movie_year = %s, status_id = %s WHERE movie_id = %s", (movie_year, status_id, movie_id))
         conn.commit()
         cur.close()
         conn.close()
         return redirect(url_for('movies_list'))
     else:
-        # Fetch current movie details
-        cur.execute("SELECT * FROM movies WHERE movie_id = %s", (movie_id,))
+        cur.execute("SELECT movie_year, status_id FROM movies WHERE movie_id = %s", (movie_id,))
         movie = cur.fetchone()
-        
-        # Fetch all genres for checkboxes
-        cur.execute("SELECT genre_id, genre_description FROM genres")
-        all_genres = cur.fetchall()
-        
-        # Fetch current genres of the movie
-        cur.execute("SELECT genre_id FROM movie_genres WHERE movie_id = %s", (movie_id,))
-        current_genre_ids = [genre_id[0] for genre_id in cur.fetchall()]
-        
+        cur.execute("SELECT status_id, status_description FROM status")
+        statuses = cur.fetchall()
         cur.close()
         conn.close()
-        return render_template('edit_movie.html', movie=movie, all_genres=all_genres, current_genre_ids=current_genre_ids)
+        return render_template('edit_movie.html', movie=movie, movie_id=movie_id, statuses=statuses)
+
 
 
 @app.route('/watchlists_list')
@@ -234,9 +216,16 @@ def new_review():
     cur = conn.cursor()
     if request.method == 'POST':
         movie_id = request.form['movie_id']
+        location_id = request.form['location_id']  # This assumes you want to track where it was watched at the time of the review
         review_title = request.form['review_title']
         review_rating = request.form['review_rating']
         review_description = request.form['review_description']
+        
+        # Here you might want to update the movie's location, if that's part of your logic:
+        cur.execute("UPDATE movies SET location_id = %s WHERE movie_id = %s", (location_id, movie_id))
+        
+        # Automatically set the movie's status to "Reviewed" (status_id = 4)
+        cur.execute("UPDATE movies SET status_id = 4 WHERE movie_id = %s", (movie_id,))
         
         cur.execute("INSERT INTO reviews (movie_id, review_title, review_rating, review_description) VALUES (%s, %s, %s, %s)",
                     (movie_id, review_title, review_rating, review_description))
@@ -247,9 +236,13 @@ def new_review():
     else:
         cur.execute("SELECT movie_id, movie_title FROM movies")
         movies = cur.fetchall()
+        cur.execute("SELECT location_id, location_name FROM location")
+        locations = cur.fetchall()
         cur.close()
         conn.close()
-        return render_template('new_review.html', movies=movies)
+        return render_template('new_review.html', movies=movies, locations=locations)
+
+
 
 @app.route('/view_review/<int:review_id>')
 def view_review(review_id):

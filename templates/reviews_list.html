@@ -5,8 +5,10 @@
     <ul>
     {% for review in reviews %}
         <li>
-            <a href="{{ url_for('view_review', review_id=review[0]) }}">{{ review[4] }} ({{ review[5] }}) - {{ review[1] }}</a>
-            <span>{{ review[6] }}</span>
+            <em><strong>{{ review[4] }} ({{ review[5] }})</strong></em>
+            <br> &quot;{{ review[1] }}&quot; 
+            <br> <span><small>{{ review[6] }}</small></span>
+            <br> <a href="{{ url_for('view_review', review_id=review[0]) }}" class="btn btn-secondary btn-sm">View Review</a>
         </li>
     {% endfor %}
     </ul>

@@ -9,8 +9,17 @@
                 <option value="{{ movie[0] }}">{{ movie[1] }}</option>
             {% endfor %}
         </select><br>
+        
+        <label for="location_id">Select Location:</label>
+        <select id="location_id" name="location_id">
+            {% for location in locations %}
+                <option value="{{ location[0] }}">{{ location[1] }}</option>
+            {% endfor %}
+        </select><br>
+
         <label for="review_title">Review Title:</label>
         <input type="text" id="review_title" name="review_title" required><br>
+
         <label for="review_rating">Review Rating:</label>
         <select id="review_rating" name="review_rating" required>
             <option value="1">1</option>
@@ -19,8 +28,10 @@
             <option value="4">4</option>
             <option value="5">5</option>
         </select><br>
+
         <label for="review_description">Review Description:</label>
         <textarea id="review_description" name="review_description" required></textarea><br>
+        
         <input type="submit" value="Submit Review">
     </form>
 {% endblock %}

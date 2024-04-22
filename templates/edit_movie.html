@@ -2,19 +2,15 @@
 
 {% block content %}
     <h1>Edit Movie</h1>
-    <form action="{{ url_for('edit_movie', movie_id=movie[0]) }}" method="post">
+    <form action="{{ url_for('edit_movie', movie_id=movie_id) }}" method="post">
         <label for="movie_year">Movie Year:</label>
-        <input type="number" id="movie_year" name="movie_year" value="{{ movie[2] }}" required><br>
-
-        <fieldset>
-            <legend>Edit Genres:</legend>
-            {% for genre in all_genres %}
-                <input type="checkbox" id="genre_{{ genre[0] }}" name="genres" value="{{ genre[0] }}"
-                {% if genre[0] in current_genre_ids %} checked {% endif %}>
-                <label for="genre_{{ genre[0] }}">{{ genre[1] }}</label><br>
+        <input type="number" id="movie_year" name="movie_year" value="{{ movie[0] }}" required><br>
+        <label for="status_id">Status:</label>
+        <select id="status_id" name="status_id">
+            {% for status in statuses %}
+                <option value="{{ status[0] }}" {% if status[0] == movie[1] %}selected{% endif %}>{{ status[1] }}</option>
             {% endfor %}
-        </fieldset>
-        
+        </select><br>
         <input type="submit" value="Update">
     </form>
 {% endblock %}
