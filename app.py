@@ -15,11 +15,11 @@ def get_db_connection():
 
 @app.route('/login')
 def login():
-    return 'Login'
+    return render_template('login.html')
 
 @app.route('/signup')
 def signup():
-    return 'Signup'
+    return render_template('signup.html')
 
 @app.route('/logout')
 def logout():

@@ -16,7 +16,7 @@
 8. ```pip install flask```
 9. ```pip install mysql-connector-python```
 
-### Final touches:
+### Configure the app itself:
 
 10. In app.py, in the ```get_db_connection``` method, make sure ```user```, ```password```, and ```database``` are correct.
 11. ```python3 app.py``` will start the app.
