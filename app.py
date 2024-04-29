@@ -6,10 +6,26 @@ app = Flask(__name__)
 def get_db_connection():
     return mysql.connector.connect(
         host='127.0.0.1',
-        user='root',
-        password='professor',
-        database='review_movies'
+        user='',
+        password='',
+        database=''
     )
+
+# Authentication routes:
+
+@app.route('/login')
+def login():
+    return 'Login'
+
+@app.route('/signup')
+def signup():
+    return 'Signup'
+
+@app.route('/logout')
+def logout():
+    return 'Logout'
+
+# Non-authentication routes:
 
 @app.route('/')
 def home():
