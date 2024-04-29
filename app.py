@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
 app = Flask(__name__)
@@ -20,6 +21,40 @@ def login():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+@app.route('/signup', methods=['POST'])
+def signup_post(): # Do all this stuff after the user submits the signup form
+    # Grab data from request object:
+    username_from_signup_form = request.form.get('username')
+    password_from_signup_form = request.form.get('password')
+
+    # Connect to db:
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Make sure no one with this username already exists in the db:
+    cur.execute("SELECT * FROM users WHERE username = %s", (username_from_signup_form,))
+        # And yes, that trailing comma needs to be there since it's a single-element tuple. Stupid, but whatever.
+    existing_user = cur.fetchone()
+
+    # If so, redirect to signup page so they can try again:
+    if existing_user:
+        flash('An account with this username already exists. Please try again.')
+        return redirect(url_for('signup'))
+
+    # Otherwise, hash their password, and add to db:
+    hashed_password = generate_password_hash(password_from_signup_form)
+    cur.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", 
+                    (username_from_signup_form, hashed_password))
+    flash('Account creation successful! Please log in.')
+
+
+    # Close connection to db:
+    cur.close()
+    conn.close()
+
+    # Redirect user to login page upon signing up successfully:
+    return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
