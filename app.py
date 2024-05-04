@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'fasdfl6kjasdf3lkasjdf'
 
 def get_db_connection():
     return mysql.connector.connect(
