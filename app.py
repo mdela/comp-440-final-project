@@ -1,9 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
+# from models import User, SessionLocal, DATABASE_URI, conn
+import models
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select, insert
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = models.DATABASE_URI
 app.config['SECRET_KEY'] = 'fasdfl6kjasdf3lkasjdf'
+# init SQLAlchemy so we can use it later in our models
+db = SQLAlchemy()
+db.init_app(app)
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -30,29 +39,39 @@ def signup_post(): # Do all this stuff after the user submits the signup form
     password_from_signup_form = request.form.get('password')
 
     # Connect to db:
-    conn = get_db_connection()
-    cur = conn.cursor()
+    # conn = get_db_connection()
+    # cur = conn.cursor()
 
     # Make sure no one with this username already exists in the db:
-    cur.execute("SELECT * FROM users WHERE username = %s", (username_from_signup_form,))
+    # find_user_result = cur.execute("SELECT * FROM users WHERE username = %s", (username_from_signup_form,))
         # And yes, that trailing comma needs to be there since it's a single-element tuple. Stupid, but whatever.
-    existing_user = cur.fetchone()
+    # find_user_result = conn.execute(db.session.query(User).filter_by(username=username_from_signup_form).first())
+    find_user_result = db.session.execute(select(models.users_table).where(models.users_table.c.username == username_from_signup_form)).all()
+    print(f"************** FIND USER RESULT = {find_user_result}")
+    # existing_user = cur.fetchone()
 
     # If so, redirect to signup page so they can try again:
+    existing_user = find_user_result
     if existing_user:
         flash('An account with this username already exists. Please try again.')
         return redirect(url_for('signup'))
 
     # Otherwise, hash their password, and add to db:
-    hashed_password = generate_password_hash(password_from_signup_form)
-    cur.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", 
-                    (username_from_signup_form, hashed_password))
+    # hashed_password = generate_password_hash(password_from_signup_form)
+    # new_user = cur.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", 
+                    # (username_from_signup_form, hashed_password))
+    # new_user = models.User(username=username_from_signup_form, password_hash=generate_password_hash(password_from_signup_form))
+    db.session.execute(models.users_table.insert().values(username=username_from_signup_form, password_hash=generate_password_hash(password_from_signup_form)))
+    # add the new user to the database
+    # db.session.add(new_user)
+    db.session.commit()
+    # print(f"************** NEW USER = {new_user}")
     flash('Account creation successful! Please log in.')
 
 
     # Close connection to db:
-    cur.close()
-    conn.close()
+    # cur.close()
+    # conn.close()
 
     # Redirect user to login page upon signing up successfully:
     return redirect(url_for('login'))
