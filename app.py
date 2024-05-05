@@ -28,6 +28,17 @@ def get_db_connection():
 def login():
     return render_template('login.html')
 
+@app.route('/login', methods=['POST'])
+def login_post():
+    username_from_signup_form = request.form.get('username')
+    password_from_signup_form = request.form.get('password')
+    remember = True if request.form.get('remember') else False
+    find_user_result = db.session.execute(select(models.users_table).where(models.users_table.c.username == username_from_signup_form)).first()
+    if not find_user_result or not check_password_hash(find_user_result.password_hash, password_from_signup_form):
+        flash('Please check your login details and try again.')
+        return redirect(url_for('login'))
+    return redirect(url_for('home')) # redirect to homepage upon successful login (for now)
+
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
