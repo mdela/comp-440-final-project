@@ -215,7 +215,7 @@ def new_watchlist():
         watchlist_name = request.form['watchlist_name']
         selected_movies = request.form.getlist('movies')
         
-        cur.execute("INSERT INTO watchlist (watchlist_name) VALUES (%s)", (watchlist_name,))
+        cur.execute("INSERT INTO watchlist (watchlist_name, user_id) VALUES (%s, %s)", (watchlist_name, current_user.id))
         watchlist_id = cur.lastrowid
         
         for movie_id in selected_movies:
