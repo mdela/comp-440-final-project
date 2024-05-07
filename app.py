@@ -98,7 +98,12 @@ def home():
 @login_required  # Protect the route using login_required decorator
 def profile():
   # Access user data from current_user object (e.g., username, email)
-  return render_template('profile.html', user=current_user)
+  # Retrieve all reviews from this user:
+  conn = get_db_connection()
+  cur = conn.cursor()
+  cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE user_id = %s", (current_user.id,))
+  reviews_for_this_user = cur.fetchall()
+  return render_template('profile.html', user=current_user, reviews=reviews_for_this_user)
 
 @app.route('/movies')
 def movies_list():
@@ -121,10 +126,14 @@ def view_movie(movie_id):
     
     cur.execute("SELECT g.genre_description FROM genres g JOIN movie_genres mg ON g.genre_id = mg.genre_id WHERE mg.movie_id = %s", (movie_id,))
     genres = cur.fetchall()  # This will retrieve all genres associated with the movie.
-    
+
+    # Retrieve all reviews for this movie:
+    cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE movie_id = %s AND user_id IS NOT NULL", (movie_id,))
+    reviews_for_this_movie = cur.fetchall()
+
     cur.close()
     conn.close()
-    return render_template('view_movie.html', movie=movie, genres=genres)
+    return render_template('view_movie.html', movie=movie, genres=genres, reviews=reviews_for_this_movie)
 
 
 # Route for adding a new movie

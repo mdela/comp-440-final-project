@@ -1,5 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>My Profile</h1>
-<h3>{{current_user.username}}</h3>
+<h3>{{user.username}}</h3>
+
+<!-- Show all the reviews from this user -->
+{% if reviews %}
+    {% for review in reviews %}
+        <!-- for loop to display stars? -->
+        <!-- Display a Bootstrap card for each review -->
+        <div class="card mb-3">
+            <div class="card-header">
+            <h5>"{{review[1]}}"</h5>
+            </div>
+            <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p>"{{review[2]}}"</p>
+                <footer class="blockquote-footer">Review for The Godfather</footer>
+            </blockquote>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>This person has no reviews yet!</p>
+{% endif %}
+
 {% endblock %}

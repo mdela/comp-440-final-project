@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Movie Details</h1>
-    <p><strong>Title:</strong> {{ movie[1] }}</p>
-    <p><strong>Year:</strong> {{ movie[2] }}</p>
+    <h1>{{ movie[1] }} ({{ movie[2] }})</h1>
 
     <!-- Displaying genres -->
     <p><strong>Genres:</strong>
@@ -19,6 +17,29 @@
             No genres listed.
         {% endif %}
     </p>
+
+    <!-- Show all the reviews for this movie -->
+    {% if reviews %}
+        {% for review in reviews %}
+            <!-- for loop to display stars? -->
+            <!-- Display a Bootstrap card for each review -->
+            <div class="card mb-3">
+                <div class="card-header">
+                  <h5>"{{review[1]}}"</h5>
+                </div>
+                <div class="card-body">
+                  <blockquote class="blockquote mb-0">
+                    <p>"{{review[2]}}"</p>
+                    <footer class="blockquote-footer">Joe Shmo</footer>
+                  </blockquote>
+                </div>
+              </div>
+        {% endfor %}
+    {% else %}
+        <p>There are no reviews yet for this movie. Be the first!</p>
+    {% endif %}
+
+    
 
     <p><a href="{{ url_for('edit_movie', movie_id=movie[0]) }}">Edit Movie</a></p>
 {% endblock %}
