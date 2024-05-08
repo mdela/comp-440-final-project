@@ -3,4 +3,23 @@
 {% block content %}
     <h1>Welcome to the Movie Review App!</h1>
     <p>Hello there! This is your go-to app for managing movie reviews.</p>
+
+    <!-- Display the latest reviews -->
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>{{review[-3]}} ({{review[-2]}})</h5>
+                </div>
+                <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <h4>{{review[3]}}</h4>
+                    <p>{{review[4]}}</p>
+                    <footer class="blockquote-footer">{{review[-1]}}</footer>
+                </blockquote>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}

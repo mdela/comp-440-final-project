@@ -92,18 +92,29 @@ def register():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    # Display all reviews, just to have something to look at on the homepage!
+    conn = get_db_connection()
+    cur = conn.cursor()
+    # cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews")
+    # cur.execute("SELECT r.*, m.movie_title, m.movie_year FROM reviews r JOIN movies m ON r.movie_id = m.movie_id;")
+    cur.execute("SELECT r.*, m.movie_title, m.movie_year, u.username FROM reviews r JOIN movies m ON r.movie_id = m.movie_id JOIN users u ON r.user_id = u.id;")
+    all_reviews = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('home.html', reviews=all_reviews)
 
 @app.route('/profile')
 @login_required  # Protect the route using login_required decorator
 def profile():
-  # Access user data from current_user object (e.g., username, email)
-  # Retrieve all reviews from this user:
-  conn = get_db_connection()
-  cur = conn.cursor()
-  cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE user_id = %s", (current_user.id,))
-  reviews_for_this_user = cur.fetchall()
-  return render_template('profile.html', user=current_user, reviews=reviews_for_this_user)
+    # Access user data from current_user object (e.g., username, email)
+    # Retrieve all reviews from this user:
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE user_id = %s", (current_user.id,))
+    reviews_for_this_user = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('profile.html', user=current_user, reviews=reviews_for_this_user)
 
 @app.route('/movies')
 def movies_list():
