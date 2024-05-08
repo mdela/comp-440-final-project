@@ -2,15 +2,26 @@
 
 {% block content %}
     <h1>List of Movies</h1>
-    <ul>
-    {% for movie in movies %}
-        <li>
-            <a href="{{url_for('view_movie', movie_id=movie[0])}}"><em><strong>{{ movie[1] }} ({{ movie[2] }})</strong></em></a> 
-            {% if current_user.is_authenticated %}
-            <br>Status: {{ movie[3] }}
-            <br> <a href="{{ url_for('edit_movie', movie_id=movie[0]) }}" class="btn btn-primary btn-sm">Edit</a>
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
+    <table class="table table-bordered border-primary">
+        <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Released</th>
+              {% if current_user.is_authenticated %}
+              <th scope="col"></th>
+              {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>
+              <td><a href="{{url_for('view_movie', movie_id=movie[0])}}"><em><strong>{{ movie[1] }} ({{ movie[2] }})</strong></em></a></td>
+              <td>{{movie[2]}}</td>
+              {% if current_user.is_authenticated %}
+              <td><a href="{{ url_for('edit_movie', movie_id=movie[0]) }}" class="btn btn-primary btn-sm">Edit</a></td>
+              {% endif %}  
+            </tr>
+            {% endfor %}
+        </tbody>        
+    </table>
 {% endblock %}
