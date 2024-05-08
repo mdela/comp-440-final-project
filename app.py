@@ -139,7 +139,8 @@ def view_movie(movie_id):
     genres = cur.fetchall()  # This will retrieve all genres associated with the movie.
 
     # Retrieve all reviews for this movie:
-    cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE movie_id = %s AND user_id IS NOT NULL", (movie_id,))
+    # cur.execute("SELECT review_rating, review_title, review_description, review_date, user_id FROM reviews WHERE movie_id = %s AND user_id IS NOT NULL", (movie_id,))
+    cur.execute("SELECT reviews.review_rating, reviews.review_title, reviews.review_description, reviews.review_date, users.username FROM reviews INNER JOIN users ON reviews.user_id = users.id WHERE reviews.movie_id = %s AND reviews.user_id IS NOT NULL", (movie_id,))
     reviews_for_this_movie = cur.fetchall()
 
     cur.close()
