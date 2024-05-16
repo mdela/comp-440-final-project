@@ -2,14 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import mysql.connector
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user # for user authentication
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host='127.0.0.1',
-        user='root',
-        password='password',
-        database='comp440'
-    )
+    # Connect to ClearDB database, which is a Heroku add-on:
+    database_url = os.environ.get('CLEARDB_DATABASE_URL')
+    return mysql.connector.connect(database_url)
 
 class User(UserMixin):
   def __init__(self, id, username, password_hash):
