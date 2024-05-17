@@ -5,9 +5,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 def get_db_connection():
-    # Connect to ClearDB database, which is a Heroku add-on:
-    database_url = os.environ.get('CLEARDB_DATABASE_URL')
-    return mysql.connector.connect(database_url)
+    return mysql.connector.connect(
+        host='127.0.0.1',
+        user='root',
+        password='password',
+        database='comp440'
+    )
 
 class User(UserMixin):
   def __init__(self, id, username, password_hash):
